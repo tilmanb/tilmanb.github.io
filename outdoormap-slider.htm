@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Thunderforest Outdoor tiles Slippy</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+	 
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	
+
+	  <style type="text/css">
+    #basemapslidercontainer {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    #basemapslider{
+      font-size:62.5%;
+      margin: 14px;
+      height: 125px;
+      width:7px;
+    }
+	</style>
+	
+	  <script>
+    $(document).ready(function () {
+      $("#basemapslider").slider({
+            animate: true,
+            value: 0.5,
+            orientation: "vertical",
+            min: 0,
+            max: 1,
+            step: 0.1,
+            slide: function (event, ui) {
+                for(var ol in overlays) {
+					// do something with obj[key]
+					overlays[ol].setOpacity(ui.value);
+					
+				};
+            }
+       });
+
+        $('#basemapslider').mousedown(function(){
+          map.dragging.disable();
+        })
+
+        $('#basemapslider').mouseup(function(){
+          map.dragging.enable();
+        })
+		});
+		</script>
+	
+	</head>
+<body>
+	<div id="map" style="width: 1600; height: 1000px">
+		<div id="basemapslidercontainer">
+			<div id="basemapslider"></div>
+		</div>
+	</div>
+
+	 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	 <script src="leaflet-hash.js"></script>
+	<script>
+
+		var map = L.map('map', {}).setView([51.7991, 10.6156], 13);
+
+mapnik_link = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+tf_link = '<a href="http://thunderforest.com/">Thunderforest</a>';
+var tf = L.tileLayer(
+    'http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
+        attribution: '&copy; '+mapnik_link+' Contributors & '+tf_link,
+        maxZoom: 18, attributionControl: true,
+    });
+	
+	tf.addTo(map);
+	
+var mapnik = L.tileLayer(
+	'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	attribution: 'Map data &copy; ' + mapnik_link,
+	maxZoom: 19,
+});
+	
+var mapnik_bw = L.tileLayer(
+	'http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: 'Map data &copy; ' + mapnik_link+' Contributors & toolserver.org bw-mapnik',
+});
+	
+
+
+var wmsigme = L.tileLayer.wms("http://www.bgr.de/Service/geologie/Igme5000/?SERVICE=WMS&", {
+    layers: 'la_GeoKonti',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'IGME: <a href="http://www.bgr.bund.de/DE/Themen/Sammlungen-Grundlagen/GG_geol_Info/NichtPublizieren/Europa/IGME5000/igme5000_node.html">BGR</a>',
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+
+var wmsguek = L.tileLayer.wms("http://www.bgr.de/service/geologie/guek200/index.php?service=WMS&", {
+    layers: 'GUEK200_300',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'GÜK200: <a href="http://www.bgr.bund.de/DE/Themen/Sammlungen-Grundlagen/GG_geol_Info/Karten/Deutschland/GUEK200/guek200_inhalt.html">BGR</a>',
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+var wmsgk25 = L.tileLayer.wms("http://nibis.lbeg.de/net3/public/ogc.ashx?PkgId=22&Service=WMS", {
+    layers: 'L160',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'GK25: <a href="http://www.lbeg.niedersachsen.de/portal/live.php?navigation_id=731&article_id=596&_psmand=4">LBEG</a>',
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+var wmsdop40nrw = L.tileLayer.wms("http://www.wms.nrw.de/geobasis/wms_nw_dop40", {
+    layers: 'WMS_NW_DOP40',
+    format: 'image/png',
+    transparent: true,
+    attribution: "DOP40 NRW: Bezirksregierung Köln, Abteilung Geobasis NRW",
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+		var baseLayers = {
+			//"Kein":null,
+			"Mapnik":mapnik,
+			"Mapnik (s/w)": mapnik_bw,
+			"Thunderforest": tf,
+			
+			
+			
+		};	
+		
+		var overlays = {
+			"IGME":wmsigme,
+			"GK25": wmsgk25,
+			"DOP40 NRW": wmsdop40nrw,
+			"GÜK200": wmsguek,
+		};
+	
+L.control.layers(baseLayers, overlays).addTo(map);
+
+		var hash = new L.Hash(map);
+
+	</script>
+</body>
+</html>
