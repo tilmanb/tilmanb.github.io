@@ -106,7 +106,7 @@ var wmsigme = L.tileLayer.wms("http://www.bgr.de/Service/geologie/Igme5000/?SERV
 });
 
 
-var wmsguek = L.tileLayer.betterWMS("http://www.bgr.de/service/geologie/guek200/index.php?service=WMS&", {
+var wmsguek = L.tileLayer.BetterWMS("http://www.bgr.de/service/geologie/guek200/index.php?service=WMS&", {
     layers: 'GUEK200_300',
     format: 'image/png',
     transparent: true,
@@ -115,7 +115,7 @@ var wmsguek = L.tileLayer.betterWMS("http://www.bgr.de/service/geologie/guek200/
 	//crs:'3857'
 });
 
-var wmsgk25 = L.tileLayer.betterWMS("http://nibis.lbeg.de/net3/public/ogc.ashx?PkgId=22&Service=WMS", {
+var wmsgk25 = L.tileLayer.wms("http://nibis.lbeg.de/net3/public/ogc.ashx?PkgId=22&Service=WMS", {
     layers: 'L160',
     format: 'image/png',
     transparent: true,
