@@ -70,6 +70,6 @@ L.TileLayer.BetterWMS = L.TileLayer.WMS.extend({
   }
 });
 
-L.tileLayer.betterWms = function (url, options) {
+L.tileLayer.betterWMS = function (url, options) {
   return new L.TileLayer.BetterWMS(url, options);  
 };
