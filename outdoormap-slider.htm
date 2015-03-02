@@ -114,11 +114,20 @@ var wmsguek = L.tileLayer.wms("http://www.bgr.de/service/geologie/guek200/index.
 	//crs:'3857'
 });
 
-var wmsgk25 = L.tileLayer.wms("http://nibis.lbeg.de/net3/public/ogc.ashx?PkgId=22&Service=WMS", {
+var wmsgk25nds = L.tileLayer.wms("http://nibis.lbeg.de/net3/public/ogc.ashx?PkgId=22&Service=WMS", {
     layers: 'L160',
     format: 'image/png',
     transparent: true,
-    attribution: 'GK25: <a href="http://www.lbeg.niedersachsen.de/portal/live.php?navigation_id=731&article_id=596&_psmand=4">LBEG</a>',
+    attribution: 'GK25 Niedersachsen: <a href="http://www.lbeg.niedersachsen.de/portal/live.php?navigation_id=731&article_id=596&_psmand=4">LBEG</a>',
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+var wmsgk25by = L.tileLayer.wms("http://www.bis.bayern.de/wms/lfu/gk25_wms?", {
+    layers: 'GK500',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'GK25 Bayern: Creative Commons Namensnennung (CC BY 3.0), Datenquelle: Bayerisches Landesamt für Umwelt, www.lfu.bayern.de',
 	opacity: 0.5,
 	//crs:'3857'
 });
@@ -143,10 +152,11 @@ var wmsdop40nrw = L.tileLayer.wms("http://www.wms.nrw.de/geobasis/wms_nw_dop40",
 		};	
 		
 		var overlays = {
-			"IGME":wmsigme,
-			"GK25": wmsgk25,
+			"IGME"     :wmsigme,
+			"GK25 NDS" : wmsgk25nds,
+			"GK25 BY"  : wmsgk25by,
 			"DOP40 NRW": wmsdop40nrw,
-			"GÜK200": wmsguek,
+			"GÜK200"   : wmsguek,
 		};
 	
 L.control.layers(baseLayers, overlays).addTo(map);
