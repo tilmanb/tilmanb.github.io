@@ -69,13 +69,15 @@
 	 <script src="leaflet-hash.js"></script>
 	<script>
 
-		var map = L.map('map', {}).setView([51.7991, 10.6156], 13);
+	var map = L.map('map', {}).setView([51.7991, 10.6156], 13);
 
-mapnik_link = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
-tf_link = '<a href="http://thunderforest.com/">Thunderforest</a>';
+	mapnik_link = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+	tf_link = '<a href="http://thunderforest.com/">Thunderforest</a>';
+	opentopomap_link = '<a href="http://opentopomap.org">OpenTopoMap</a>'
+
 var tf = L.tileLayer(
     'http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
-        attribution: '&copy; '+mapnik_link+' Contributors & '+tf_link,
+        attribution: 'Map data &copy; '+mapnik_link+' Contributors & '+tf_link,
         maxZoom: 18, attributionControl: true,
     });
 	
@@ -92,7 +94,12 @@ var mapnik_bw = L.tileLayer(
 	maxZoom: 19,
 	attribution: 'Map data &copy; ' + mapnik_link+' Contributors & toolserver.org bw-mapnik',
 });
-	
+
+var opentopomap = L.tileLayer(
+ 'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+ maxZoom: 16,
+ attribution: 'Kartendaten: &copy; '+mapnik_link+', SRTM | Kartendarstellung: &copy; '+opentopomap_link,
+});	
 
 
 var wmsigme = L.tileLayer.wms("http://www.bgr.de/Service/geologie/Igme5000/?SERVICE=WMS&", {
@@ -146,7 +153,7 @@ var wmsdop40nrw = L.tileLayer.wms("http://www.wms.nrw.de/geobasis/wms_nw_dop40",
 			"Mapnik":mapnik,
 			"Mapnik (s/w)": mapnik_bw,
 			"Thunderforest": tf,
-			
+			"OpenTopoMap": opentopomap,
 			
 			
 		};	
