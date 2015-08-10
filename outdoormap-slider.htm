@@ -120,6 +120,17 @@ var wmsgk1000 = L.tileLayer.wms("http://services.bgr.de/wms/geologie/gk1000/", {
 	//crs:'3857'
 });
 
+var wmsbsk1000 = L.tileLayer.wms("http://www.bgr.de/service/rohstoffe/BSK1000/", {
+    layers: '2,4,10,12',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'BSK1000: <a href="http://www.bgr.de/service/rohstoffe/BSK1000/index.php?">BGR</a>',
+	opacity: 0.5,
+	//crs:'3857'
+});
+
+
+
 
 
 var wmsguek = L.tileLayer.wms("http://services.bgr.de/wms/geologie/guek200/?", {
