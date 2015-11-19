@@ -80,8 +80,14 @@ var tf = L.tileLayer(
         attribution: 'Map data &copy; '+mapnik_link+' Contributors & '+tf_link,
         maxZoom: 18, attributionControl: true,
     });
-	
+    
 	tf.addTo(map);
+	
+var tf_landscape = L.tileLayer(
+	'https://[abc].tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
+	        attribution: 'Map data &copy; '+mapnik_link+' Contributors & '+tf_link,
+        	maxZoom: 18, attributionControl: true,	
+	});
 	
 var mapnik = L.tileLayer(
 	'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -174,6 +180,7 @@ var wmsdop40nrw = L.tileLayer.wms("http://www.wms.nrw.de/geobasis/wms_nw_dop40",
 			"Mapnik":mapnik,
 			"Mapnik (s/w)": mapnik_bw,
 			"Thunderforest": tf,
+			"TF landscape": tf_landscape,
 			"OpenTopoMap": opentopomap,
 			
 			
