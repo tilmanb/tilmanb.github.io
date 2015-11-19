@@ -84,7 +84,7 @@ var tf = L.tileLayer(
 	tf.addTo(map);
 	
 var tf_landscape = L.tileLayer(
-	'https://[abc].tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
+	'https://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
 	        attribution: 'Map data &copy; '+mapnik_link+' Contributors & '+tf_link,
         	maxZoom: 18, attributionControl: true,	
 	});
