@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		.left {
+			float: left;
+			margin-left: 1em;
+			width: 25em;
+		}
+		
+		.right {
+			float: left;
+			margin-left: 25em;
+		}
+		
+	</style>
+	<script src="jquery.min.js"></script>
+	<script src="proj4.js"></script>
+	<script>
+		proj4.defs("EPSG:4647","+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=32500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+		proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
+		proj4.defs("EPSG:31466","+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs");
+		proj4.defs("EPSG:31467","+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs");
+		proj4.defs("EPSG:31468","+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=4500000 +y_0=0 +ellps=bessel +towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 +units=m +no_defs");
+		
+		var EPSGNames = [
+			["EPSG:3857","Web Merkator/Google/OpenStreetMap"],
+			["EPSG:4326","WGS84 Dezimalgrad"],
+			["EPSG:4326","WGS84 Dezimalgrad lat;lon"],
+			["EPSG:4647","UTM32 mit Zonenzahl (zE-N)"],
+			["EPSG:25832", "UTM32 ohne Zonenzahl (E-N)"],
+			["EPSG:31466", "GK2"],
+			["EPSG:31467", "GK3"],
+			["EPSG:31468", "GK4"],
+			
+		]
+			
+		$( document ).ready( function() {
+			for (var i=0; i<EPSGNames.length ;i++ ) {
+				//console.log(EPSGNames[i][0]+" = " + EPSGNames[i][1]);
+				s = $("<option />").val(EPSGNames[i][0]).text(EPSGNames[i][1]);
+				$("#in_proj").append(s);
+				$("#out_proj").append(s.clone());
+			}
+			
+			$("#out_proj").change( function() {
+				var outtext = transformText($("#in_proj").val(), $("#out_proj").val(), $("#inp").val());
+				$("#outp").val(outtext);
+			});
+
+		});
+		
+		var transformText = function(inproj, outproj, text) {
+			var ret = "";
+			var lines = text.split("\n");
+			ret += lines[0]+"\n";
+			// skip header
+			for (var i=1;i<lines.length;i++) {
+				var l = lines[i].split(";");
+				var point = { x: l[0], y: l[1] }
+				//console.log("X "+ point.x + ", Y " + point.y + "("+l[2]+") von "+ inproj + " nach " + outproj );
+				var projectedCoordinates = proj4(inproj, outproj, point);
+				console.log(projectedCoordinates);
+				if ((outproj == 'EPSG:4326') && ($("#out_proj option:selected").text() == "WGS84 Dezimalgrad lat;lon")) {
+					// WGS84 lat-lon
+					ret += projectedCoordinates.y+";"+projectedCoordinates.x+";"+l[2]
+				} else {
+					// normalfall
+					ret += projectedCoordinates.x+";"+projectedCoordinates.y+";"+l[2]
+				}
+			}
+			return ret;
+		}
+		
+		
+	</script>
+
+</head>
+<body>
+<div class="left">
+Eingabeprojektion: <select id="in_proj" size="1"><option value="null">bitte wählen</option></select><br/>
+<textarea id="inp" rows="30" cols="60">X_RECHTS;Y_HOCH;Name
+3500000;5700000;Test</textarea>
+</div>
+
+<div class="right">
+Ausgabeprojektion: <select id="out_proj" size="1"><option value="null">bitte wählen</option></select><br/>
+<textarea id="outp" rows="30" cols="60">(bitte Eingabeprojektion wählen)</textarea>
+</div>
+<div class="left">
+<p>Dieses Tool benutzt <a href="https://proj4js.org/">Proj4js</a> und <a href="https://jquery.com/">jQuery</a></p>
+</div>
+</body>
+</html>
