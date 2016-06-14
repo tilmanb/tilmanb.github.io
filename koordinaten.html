@@ -44,10 +44,12 @@
 				$("#out_proj").append(s.clone());
 			}
 			
-			$("#out_proj").change( function() {
+			var reprojectHandler = function() {
 				var outtext = transformText($("#in_proj").val(), $("#out_proj").val(), $("#inp").val());
 				$("#outp").val(outtext);
-			});
+			}
+			
+			$("#out_proj").change( reprojectHandler );
 
 		});
 		
@@ -89,7 +91,7 @@ Ausgabeprojektion: <select id="out_proj" size="1"><option value="null">bitte wä
 <textarea id="outp" rows="30" cols="60">(bitte Eingabeprojektion wählen)</textarea>
 </div>
 <div class="left">
-<p>Dieses Tool benutzt <a href="https://proj4js.org/">Proj4js</a> und <a href="https://jquery.com/">jQuery</a></p>
+<p>Dieses Tool benutzt <a href="http://proj4js.org/">Proj4js</a> und <a href="https://jquery.com/">jQuery</a></p>
 </div>
 </body>
 </html>
