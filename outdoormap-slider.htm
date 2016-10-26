@@ -108,7 +108,7 @@ var opentopomap = L.tileLayer(
 });	
 
 
-var wmsigme = L.tileLayer.wms("https://www.bgr.de/Service/geologie/Igme5000/?SERVICE=WMS&", {
+var wmsigme = L.tileLayer.wms("https://services.bgr.de/wms/geologie/igme5000/?", {
     layers: 'la_GeoKonti',
     format: 'image/png',
     transparent: true,
@@ -126,7 +126,7 @@ var wmsgk1000 = L.tileLayer.wms("https://services.bgr.de/wms/geologie/gk1000/", 
 	//crs:'3857'
 });
 
-var wmsbsk1000 = L.tileLayer.wms("https://www.bgr.de/service/rohstoffe/BSK1000/", {
+var wmsbsk1000 = L.tileLayer.wms("https://services.bgr.de/wms/rohstoffe/bsk1000/?", {
     layers: '2,4,10,12',
     format: 'image/png',
     transparent: true,
