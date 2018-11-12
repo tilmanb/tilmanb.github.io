@@ -97,6 +97,42 @@ var myGeoJSON = {
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": 4,
+        "name": "line",
+        "locN": "West"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            7.212524414062511,
+            52.83595824834852
+          ],
+          [
+            7.058715820312527,
+            51.08282186160978
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": 5,
+        "name": "marker",
+        "locN": "Ganz weit Nord"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.63525390625,
+          53.66417110963306
+        ]
+      }
     }
   ]
 } // end myGeoJSON
@@ -112,12 +148,15 @@ var tableLayout = [
 
 var tableHeaderRowString;
 
+// only for debugging
+var _last_layer;
+
 
 $(document).ready(function () {
 
 	map = L.map("map").setView([52, 9], 6);
 
-	L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 	}).addTo(map);
 	
@@ -165,7 +204,15 @@ $(document).ready(function () {
 			// add selected to DOM element
 			// the variable el is visible from onEachFeature
 			el.addClass("selected");
-			map.fitBounds( layer.getBounds() );
+			// if its a marker we have to fake bounds...
+			//_last_layer = layer; // for debugging in JS console
+			var b;
+			if (typeof(layer.getBounds) == "function") {
+				b = layer.getBounds();
+			} else {
+				b = L.latLngBounds( [ layer.getLatLng() ] );
+			}
+			map.fitBounds( b );
 		  });
 		  
 		  // add TR element to table
