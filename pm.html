@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Printmaps-OSM webclient</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+	  integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	  crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+	  integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+	  crossorigin=""></script>
+	  
+	<script src="jquery.min.js"></script>
+	<script src="jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="jquery-ui.min.css">
+	<link rel="stylesheet" href="jquery-ui.structure.min.css">
+	<link rel="stylesheet" href="jquery-ui.theme.min.css">
+  
+  
+  <style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    padding: 8px;
+    background-color: #dddddd;
+}
+
+.content-container {
+	border: 1px solid #c0c0c0;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+h1 {
+	font-size: 15pt;
+}
+
+body {
+	font-family: sans-serif;
+}
+
+#map {
+	height: 350px;
+	width: 500px;
+}
+
+#navbar {
+	position: fixed;
+	top: 0px;
+	left: 10em;
+}
+</style>
+		
+<script>
+
+var mymap;
+
+$(document).ready(function() {
+
+	mymap = L.map('map').setView([51, 9], 13);
+	
+	L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+	}).addTo(mymap);
+
+}); // end document ready
+
+</script>		
+		
+</head>
+<body>
+<ul id="navbar">
+  <li class="nav-elem"><a href="#ueberblick" id="nav-ueberblick">Überblick</a></li>
+  <li class="nav-elem"><a href="#daten" id="nav-daten">Daten</a></li>
+  <li class="nav-elem"><a href="#karte" id="nav-karte">Karte</a></li>
+  <li class="nav-elem"><a href="#aktion" id="nav-aktion">Aktion</a></li>
+  <li class="nav-elem"><a href="#hilfe" id="nav-hilfe">Hilfe</a></li>
+  <li class="nav-elem"><a href="#impressum" id="nav-impressum">Impressum</a></li>
+</ul>
+<div class="content-container" id="container-ueberblick">
+	<a name="ueberblick"/>
+	<h1>Überblick</h1>
+	Dies ist der Webclient für printmaps. Siehe <a href="https://github.com/printmaps/printmaps/">https://github.com/printmaps/printmaps/</a>
+</div>
+<div class="content-container" id="container-daten">
+	<a name="daten"/>
+	<h1>Daten</h1>
+	<textarea name="mapyaml" id="text-map-yaml" rows="20" cols="163"># map definition file
+# -------------------
+# - do not use tabs or unnecessary white spaces
+# - see also http://mapnik.org/mapnik-reference
+#
+# purpose : figure ground plan (schwarzplan)
+# author  : kto
+# release : 1.0 - 2017/05/27
+#           1.1 - 2018/05/19 new design
+
+# service configuration
+# ---------------------
+
+# URL of webservice
+ServiceURL: http://printmaps-osm.de:8181/api/beta/maps/
+
+# proxy configuration (not to be done here)
+# - set the environment variable $HTTP_PROXY on your local system 
+# - e.g. export HTTP_PROXY=http://user:password@proxy.server:port
+
+# essential map attributes (required)
+# -----------------------------------
+
+# file format (e.g. pdf, png)
+Fileformat: png
+
+# scale as in "1:10000" (e.g. 10000, 25000)
+Scale: 5000
+
+# width and height (millimeter) (e.g. 609.6)
+PrintWidth: 841
+PrintHeight: 1189
+
+# center coordinates (decimal degrees) (e.g. 51.9506)
+Latitude: 51.95778
+Longitude: 7.62256
+
+# style / design (osm-carto, osm-carto-mono, osm-carto-ele20, schwarzplan, schwarzplan+, raster10)
+# raster10 (no map data): useful for placing / styling the user map elements
+# request the service capabilities to get a list of all available map styles
+Style: schwarzplan+
+
+# advanced map attributes (optional)
+# ----------------------------------
+
+# layers to hide (see service capabilities for possible values)
+HideLayers:
+
+# user defined data objects (optional)
+# ------------------------------------
+# srs: spatial reference system (is always '+init=epsg:4326' for gpx and kml)
+# type: type of data source (ogr, shape, gdal, csv)
+# layer: data layer to extract (only required for ogr)
+
+UserData:
+
+# user defined map elements (optional)
+# ------------------------------------
+# well-known-text:
+#   POINT, LINESTRING, POLYGON, MULTIPOINT, MULTILINESTRING, MULTIPOLYGON
+#   all values are in millimeter (reference X0 Y0: lower left map corner)
+# font sets:
+#   fontset-0: Noto Fonts normal
+#   fontset-1: Noto Fonts italic
+#   fontset-2: Noto Fonts bold
+
+UserItems:
+
+# frame
+- Style: <PolygonSymbolizer fill='white' fill-opacity='1.0' /> 
+  WellKnownText: POLYGON((0.0 200.0, 0.0 1189.0, 841.0 1189.0, 841.0 200.0, 0.0 200.0), (30.0 230.0, 30.0 1159.0, 811.0 1159.0, 811.0 230.0, 30.0 230.0))
+ 
+# border
+- Style: <LineSymbolizer stroke='darkgrey' stroke-width='6' stroke-linecap='square' />
+  WellKnownText: LINESTRING(30.0 230.0, 30.0 1159.0, 811.0 1159.0, 811.0 230.0, 30.0 230.0)
+
+# background for footer
+- Style: <PolygonSymbolizer fill='white' fill-opacity='1.0' /> 
+  WellKnownText: POLYGON((0.0 0.0, 0.0 200.0, 841.0 200.0, 841.0 0.0, 0.0 0.0))
+
+# footer
+- Style: <TextSymbolizer fontset-name='fontset-2' size='300' fill='darkgrey' allow-overlap='true'>'M Ü N S T E R'</TextSymbolizer>
+  WellKnownText: POINT(420.5 150.0)
+
+- Style: <TextSymbolizer fontset-name='fontset-2' size='100' fill='darkgrey' allow-overlap='true'>'51° 57\' 38" N  /  7° 37\' 34" E'</TextSymbolizer>
+  WellKnownText: POINT(420.5 75.0)
+
+# copyright
+- Style: <TextSymbolizer fontset-name='fontset-2' size='18' fill='darkgrey' orientation='90' allow-overlap='true'>'© OpenStreetMap contributors'</TextSymbolizer>
+  WellKnownText: POINT(15 694.5)
+
+# user defined scalebar (optional)
+# --------------------------------
+# nature length in meter
+# X and Y in millimeter
+
+UserScalebar:
+
+# user files to upload
+# --------------------
+
+UserFiles:
+</textarea>
+</div>
+<div class="content-container" id="container-karte">
+	<a name="karte"/>
+	<h1>Karte</h1>
+	<div id="map"/>
+</div>
+<div class="content-container" id="container-aktion">
+	<a name="aktion"/>
+	<h1>Aktion</h1>
+	Karte bestellen (order)<br/>
+	Status abfragen (state)<br/>
+	Karte herunterladen (download)<br/>
+</div>
+<div class="content-container" id="container-hilfe">
+	<a name="hilfe"/>
+	<h1>Hilfe</h1>
+	Später mal
+</div>
+<div class="content-container" id="container-impressum">
+	<a name="impressum"/>
+	<h1>Impressum</h1>
+	Später mal
+</div>
+</body>
+</html>
