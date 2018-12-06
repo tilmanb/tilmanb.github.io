@@ -1,7 +1,3 @@
-// uses http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css
-// uses http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js
-
-
 var myGeoJSON = {
   "type": "FeatureCollection",
   "features": [
@@ -205,7 +201,7 @@ $(document).ready(function () {
 			// the variable el is visible from onEachFeature
 			el.addClass("selected");
 			// if its a marker we have to fake bounds...
-			//_last_layer = layer; // for debugging in JS console
+			_last_layer = layer; // for debugging in JS console
 			var b;
 			if (typeof(layer.getBounds) == "function") {
 				b = layer.getBounds();
