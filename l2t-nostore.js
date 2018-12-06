@@ -152,7 +152,7 @@ $(document).ready(function () {
 
 	map = L.map("map").setView([52, 9], 6);
 
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 	}).addTo(map);
 	
