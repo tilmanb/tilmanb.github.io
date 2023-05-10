@@ -6,12 +6,14 @@
 		.left {
 			float: left;
 			margin-left: 1em;
+			margin-top: 5px;
 			width: 25em;
 		}
 		
 		.right {
 			float: left;
 			margin-left: 25em;
+			margin-top: 5px;
 		}
 		
 	</style>
@@ -53,6 +55,12 @@
 
 		});
 		
+		var sepCharOut = ";";
+		
+		var roundToTwo = function(num) {
+    			return +(Math.round(num + "e+2")  + "e-2");
+		}
+		
 		var transformText = function(inproj, outproj, text) {
 			var ret = "";
 			var lines = text.split("\n");
@@ -66,10 +74,10 @@
 				console.log(projectedCoordinates);
 				if ((outproj == 'EPSG:4326') && ($("#out_proj option:selected").text() == "WGS84 Dezimalgrad lat;lon")) {
 					// WGS84 lat-lon
-					ret += projectedCoordinates.y+";"+projectedCoordinates.x+";"+l.slice(2).join(";")
+					ret += roundToTwo(projectedCoordinates.y)+sepCharOut+roundToTwo(projectedCoordinates.x)+sepCharOut+l.slice(2).join(sepCharOut)
 				} else {
 					// normalfall
-					ret += projectedCoordinates.x+";"+projectedCoordinates.y+";"+l.slice(2).join(";")
+					ret += roundToTwo(projectedCoordinates.x)+sepCharOut+roundToTwo(projectedCoordinates.y)+sepCharOut+l.slice(2).join(sepCharOut)
 				}
 				ret += "\n";
 			}
