@@ -66,10 +66,10 @@
 				console.log(projectedCoordinates);
 				if ((outproj == 'EPSG:4326') && ($("#out_proj option:selected").text() == "WGS84 Dezimalgrad lat;lon")) {
 					// WGS84 lat-lon
-					ret += projectedCoordinates.y+";"+projectedCoordinates.x+";"+l[2]
+					ret += projectedCoordinates.y+";"+projectedCoordinates.x+";"+l.slice(2).join(";")
 				} else {
 					// normalfall
-					ret += projectedCoordinates.x+";"+projectedCoordinates.y+";"+l[2]
+					ret += projectedCoordinates.x+";"+projectedCoordinates.y+";"+l.slice(2).join(";")
 				}
 				ret += "\n";
 			}
