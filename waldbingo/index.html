@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waldbingo</title>
+	<link rel="icon" href="favicon.png" type="image/png">
+    <style>
+		/* Body und allgemeine Einstellungen */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Das 3x3-Grid anpassen */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            width: 100vw;      /* 100% der verfügbaren Breite */
+            height: 100vh;     /* 100% der verfügbaren Höhe */
+            max-width: 100vw;  /* Maximale Breite auf den Viewport beschränken */
+            max-height: 100vh; /* Maximale Höhe auf den Viewport beschränken */
+        }
+
+        /* Grid-Item-Styling */
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgrey;
+            border: 3px solid black;
+			box-sizing: border-box;
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .grid-item.selected {
+			background-color: rgba(9, 115, 176,0.6);
+			background-blend-mode: lighten;
+            border: 3px solid red;
+			
+        }
+
+        /* Bildgrößen flexibel machen */
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Das Bild soll den gesamten Raum ausfüllen */
+        }
+
+        /* Bildquellen- und Gewinnanzeige */
+        .win-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2em;
+            color: green;
+            font-weight: bold;
+			position: absolute;
+			text-shadow: #ffffff 0 0 3px;
+			background-color: rgba(255, 255, 255, 0.7);
+			border-radius: 11px;
+			padding: 10px;
+        }
+
+        /* Bildquellen-Link und Container */
+        .sources-container {
+            text-align: left;
+            margin-top: 5px;
+			justify-content: center;
+        }
+
+        .sources-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sources-container li {
+            margin: 5px 0;
+        }
+
+        .sources-container a {
+            color: blue;
+            text-decoration: none;
+        }
+		
+		.hidden {
+			display: none;
+		}
+		
+		#winMessageReloadLink {
+			text-decoration: none;
+		}
+		
+		a, a:visited, a:hover, a:active {
+			color: blue;
+		}
+    </style>
+</head>
+<body>
+
+    <div class="grid-container" id="grid">
+        <!-- Hier werden die Bilder dynamisch eingefügt -->
+        <div class="grid-item" data-index="0"></div>
+        <div class="grid-item" data-index="1"></div>
+        <div class="grid-item" data-index="2"></div>
+        <div class="grid-item" data-index="3"></div>
+        <div class="grid-item" data-index="4"></div>
+        <div class="grid-item" data-index="5"></div>
+        <div class="grid-item" data-index="6"></div>
+        <div class="grid-item" data-index="7"></div>
+        <div class="grid-item" data-index="8"></div>
+    </div>
+
+    <div class="win-message hidden" id="winMessage">
+		Herzlichen Glückwunsch, du hast gewonnen!
+		<p><a href="#" id="winMessageReloadLink">↻</a></p>
+	</div>
+
+    <a href="#" id="showSourcesLink">Bildquellen</a>
+    
+    <div class="sources-container hidden" id="sourcesContainer">
+        <h3>Bildquellen:</h3>
+        <ul id="imageSourcesList"></ul>
+    </div>
+
+    <script>
+        const gridItems = document.querySelectorAll('.grid-item');
+        const winMessage = document.getElementById('winMessage');
+        const showSourcesLink = document.getElementById('showSourcesLink');
+        const sourcesContainer = document.getElementById('sourcesContainer');
+        const imageSourcesList = document.getElementById('imageSourcesList');
+		const winMessageReloadLink = document.getElementById('winMessageReloadLink');
+        let selectedCells = [];
+
+        // Array mit Bild-URLs und ihren Quell-Links
+        const images = [
+            {
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Yellow_maple_leaf.jpg/180px-Yellow_maple_leaf.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Yellow_maple_leaf.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Red_squirrel_%2821808%29.jpg/308px-Red_squirrel_%2821808%29.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Red_squirrel_(21808).jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Pilzwald_im_Buchenwald.jpg/320px-Pilzwald_im_Buchenwald.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Pilzwald im Buchenwald.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cone_Pinus_pinea_01.jpg/180px-Cone_Pinus_pinea_01.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Cone_Pinus_pinea_01.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ruhland%2C_Grenzstr.%2C_Wald_zur_Autobahn_H%C3%B6he_M%C3%BCndung_Parkstr.%2C_Schneebruch%2C_Winter_2022%2C_02.jpg/180px-Ruhland%2C_Grenzstr.%2C_Wald_zur_Autobahn_H%C3%B6he_M%C3%BCndung_Parkstr.%2C_Schneebruch%2C_Winter_2022%2C_02.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Ruhland,_Grenzstr.,_Wald_zur_Autobahn_H%C3%B6he_M%C3%BCndung_Parkstr.,_Schneebruch,_Winter_2022,_02.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Pont_du_Vialais%2C_Haut-Languedoc%2C_Rosis_cf01.jpg/320px-Pont_du_Vialais%2C_Haut-Languedoc%2C_Rosis_cf01.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Pont_du_Vialais,_Haut-Languedoc,_Rosis_cf01.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Logpile_in_Achray_Forest_-_geograph.org.uk_-_736382.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Logpile_in_Achray_Forest_-_geograph.org.uk_-_736382.jpg'
+            },
+			{
+                url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Baumpilz_an_der_Menach.jpg/320px-Baumpilz_an_der_Menach.jpg',
+                source: 'https://commons.wikimedia.org/wiki/File:Baumpilz_an_der_Menach.jpg'
+            },
+			{
+                url: '',
+                source: ''
+            },
+			{
+                url: '',
+                source: ''
+            },
+			{
+                url: '',
+                source: ''
+            },
+        ];
+
+        // Funktion, um 9 zufällige Bilder auszuwählen
+        function getRandomImages(distinct=0) {
+            const randomImages = [];
+            const selectedIndexes = new Set();
+
+            while (randomImages.length < 9) {
+                const randomIndex = Math.floor(Math.random() * images.length);
+				if (distinct!=0) {
+					if (!selectedIndexes.has(randomIndex)) {
+						randomImages.push(images[randomIndex]);
+						selectedIndexes.add(randomIndex);
+					}
+				} else {
+					randomImages.push(images[randomIndex]);
+				}
+                
+            }
+            return randomImages;
+        }
+
+        // Bilder zufällig auswählen und ins Grid einfügen
+        const randomImages = getRandomImages(1);
+        gridItems.forEach((item, index) => {
+            const image = randomImages[index];
+            item.style.backgroundImage = `url(${image.url})`;
+            item.dataset.source = image.source;
+        });
+
+        // Eventlistener für das Klicken auf die Bilder
+        gridItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.classList.contains('selected')) {
+					this.classList.remove('selected');
+					const index = selectedCells.indexOf(parseInt(this.dataset.index));
+					if (index > -1) { // only splice array when item is found
+						selectedCells.splice(index, 1); // 2nd parameter means remove one item only
+					}
+				} else {
+					this.classList.add('selected');
+					selectedCells.push(parseInt(this.dataset.index));
+					if (checkWin(selectedCells)) {
+						winMessage.classList.remove('hidden');
+					}
+				}
+            });
+        });
+
+        // Funktion, um zu prüfen, ob der Spieler gewonnen hat
+        function checkWin(selectedCells) {
+            const winPatterns = [
+                [0,1,2,3,4,5,6,7,8] // alle
+				/*
+				[0, 1, 2], // Zeile 1
+                [3, 4, 5], // Zeile 2
+                [6, 7, 8], // Zeile 3
+                [0, 3, 6], // Spalte 1
+                [1, 4, 7], // Spalte 2
+                [2, 5, 8], // Spalte 3
+                [0, 4, 8], // Diagonale 1
+                [2, 4, 6]  // Diagonale 2
+				*/
+            ];
+
+            for (let pattern of winPatterns) {
+                if (pattern.every(index => selectedCells.includes(index))) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Zeige die Bildquellen an, wenn der Link angeklickt wird
+        showSourcesLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            sourcesContainer.classList.toggle('hidden');
+
+            // Füge die Bildquellen der verwendeten Bilder hinzu
+            imageSourcesList.innerHTML = ''; // Leere die Liste
+            randomImages.forEach(image => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = image.source;
+                link.textContent = image.source;
+                listItem.appendChild(link);
+                imageSourcesList.appendChild(listItem);
+            });
+        });
+		
+		winMessageReloadLink.addEventListener('click', function(event) {
+            location.reload();
+		});
+    </script>
+
+</body>
+</html>
